@@ -24,7 +24,7 @@ for repo in json.load(response):
     if os.path.exists(repo['name']):
         subprocess.call(['git', 'pull'], cwd=repo['name'])
     else:
-        subprocess.call(['git', 'clone', repo['git_url']])
+        subprocess.call(['git', 'clone', '--mirror', repo['git_url']])
 if response.info().getheader('Link'):
     # looks like you've got more than 100 repositories
     print >> sys.stderr, "error: pagination is not supported yet"
