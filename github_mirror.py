@@ -21,8 +21,9 @@ response = urllib.urlopen(url)
 for repo in json.load(response):
     print "+", repo['full_name']
     sys.stdout.flush()
-    if os.path.exists(repo['name']):
-        subprocess.call(['git', 'pull'], cwd=repo['name'])
+    dir = repo['name'] + '.git'
+    if os.path.exists(dir):
+        subprocess.call(['git', 'fetch'], cwd=dir)
     else:
         subprocess.call(['git', 'clone', '--mirror', repo['git_url']])
 if response.info().getheader('Link'):
