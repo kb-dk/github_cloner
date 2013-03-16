@@ -42,6 +42,10 @@ def update_description(git_dir, description):
     with open(os.path.join(git_dir, 'description'), 'w') as f:
         f.write(description.encode('UTF-8') + '\n')
 
+def update_cloneurl(git_dir, cloneurl):
+    with open(os.path.join(git_dir, 'cloneurl'), 'w') as f:
+        f.write(cloneurl + '\n')
+
 # action
 ensure_dir(gist_backup_dir)
 os.chdir(gist_backup_dir)
@@ -51,6 +55,11 @@ for gist in get_github_list('https://api.github.com/users/%s/gists' % username):
     info("+", "gists/" + gist['id'], "-", description.partition('\n')[0])
     backup(gist['git_pull_url'], dir)
     update_description(dir, description + '\n\n' + gist['html_url'])
+    update_cloneurl(dir, gist['git_push_url'])
+
+# help me catch silly errors
+gist = None
+del gist
 
 ensure_dir(backup_dir)
 os.chdir(backup_dir)
@@ -59,4 +68,6 @@ for repo in get_github_list('https://api.github.com/users/%s/repos' % username):
     description = repo['description'] or "(no description)"
     info("+", repo['full_name'])
     backup(repo['git_url'], dir)
-    update_description(dir, description + '\n\n' + gist['html_url'])
+    update_description(dir, description + '\n\n' + repo['html_url'])
+    update_cloneurl(dir, repo['ssh_url'])
+
