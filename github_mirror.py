@@ -40,7 +40,7 @@ def backup(git_url, dir):
 
 def update_description(git_dir, description):
     with open(os.path.join(git_dir, 'description'), 'w') as f:
-        f.write(description + '\n')
+        f.write(description.encode('UTF-8') + '\n')
 
 # action
 ensure_dir(gist_backup_dir)
