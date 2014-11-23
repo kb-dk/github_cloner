@@ -18,10 +18,13 @@ repos_of = ['mgedmin', 'gtimelog']
 backup_dir = os.path.expanduser('~/github')
 gist_backup_dir = os.path.expanduser('~/github/gists')
 
+
 # helpers
+
 def ensure_dir(dir):
     if not os.path.isdir(dir):
         os.makedirs(dir)
+
 
 def get_github_list(url):
     response = urllib.urlopen(url + '?per_page=100')
@@ -29,9 +32,11 @@ def get_github_list(url):
         print >> sys.stderr, "error: pagination is not supported yet"
     return json.load(response)
 
+
 def info(*args):
     print(" ".join(map(str, args)))
     sys.stdout.flush()
+
 
 def backup(git_url, dir):
     if os.path.exists(dir):
@@ -39,9 +44,11 @@ def backup(git_url, dir):
     else:
         subprocess.call(['git', 'clone', '--mirror', git_url])
 
+
 def update_description(git_dir, description):
     with open(os.path.join(git_dir, 'description'), 'w') as f:
         f.write(description.encode('UTF-8') + '\n')
+
 
 def update_cloneurl(git_dir, cloneurl):
     with open(os.path.join(git_dir, 'cloneurl'), 'w') as f:
