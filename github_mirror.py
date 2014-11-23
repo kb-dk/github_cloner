@@ -1,14 +1,14 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # See http://stackoverflow.com/questions/3581031/backup-mirror-github-repositories/13917251#13917251
 # You can find the latest version of this script at
 # https://gist.github.com/4319265
 import os
 import sys
 import json
-import urllib
+import urllib.request
 import subprocess
 
-__version__ = '0.3'
+__version__ = '0.4'
 __author__ = 'Marius Gedminas <marius@gedmin.as>'
 __url__ = 'https://gist.github.com/4319265'
 
@@ -21,16 +21,54 @@ gist_backup_dir = os.path.expanduser('~/github/gists')
 
 # helpers
 
+class Error(Exception):
+    """An error that is not a bug in this script."""
+
+
 def ensure_dir(dir):
     if not os.path.isdir(dir):
         os.makedirs(dir)
 
 
-def get_github_list(url):
-    response = urllib.urlopen(url + '?per_page=100')
-    if response.info().getheader('Link'):
-        print >> sys.stderr, "error: pagination is not supported yet"
-    return json.load(response)
+def get_json_and_headers(url):
+    """Perform HTTP GET for a URL, return deserialized JSON and headers.
+
+    Returns a tuple (json_data, headers) where headers is an instance
+    of email.message.Message (because that's what urllib gives us).
+    """
+    with urllib.request.urlopen(url) as r:
+        # We expect Github to return UTF-8, but let's verify that.
+        content_type = r.info().get('Content-Type', '').lower()
+        if content_type not in ('application/json; charset="utf-8"',
+                                'application/json; charset=utf-8'):
+            raise Error('Did not get UTF-8 JSON data from {0}, got {1}'
+                        .format(url, content_type))
+        return json.loads(r.read().decode('UTF-8')), r.info()
+
+
+def get_github_list(url, batch_size=100):
+    """Perform (a series of) HTTP GETs for a URL, return deserialized JSON.
+
+    Format of the JSON is documented at
+    http://developer.github.com/v3/repos/#list-organization-repositories
+
+    Supports batching (which Github indicates by the presence of a Link header,
+    e.g. ::
+
+        Link: <https://api.github.com/resource?page=2>; rel="next",
+              <https://api.github.com/resource?page=5>; rel="last"
+
+    """
+    # API documented at http://developer.github.com/v3/#pagination
+    res, headers = get_json_and_headers('{0}?per_page={1}'.format(
+        url, batch_size))
+    page = 1
+    while 'rel="next"' in headers.get('Link', ''):
+        page += 1
+        more, headers = get_json_and_headers('{0}?page={1}&per_page={2}'.format(
+            url, page, batch_size))
+        res += more
+    return res
 
 
 def info(*args):
@@ -46,8 +84,8 @@ def backup(git_url, dir):
 
 
 def update_description(git_dir, description):
-    with open(os.path.join(git_dir, 'description'), 'w') as f:
-        f.write(description.encode('UTF-8') + '\n')
+    with open(os.path.join(git_dir, 'description'), 'w', encoding='UTF-8') as f:
+        f.write(description + '\n')
 
 
 def update_cloneurl(git_dir, cloneurl):
