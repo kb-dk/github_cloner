@@ -7,10 +7,11 @@ import sys
 import json
 import urllib.request
 import subprocess
+import argparse
 
 __version__ = '0.4'
-__author__ = 'Marius Gedminas <marius@gedmin.as>'
-__url__ = 'https://gist.github.com/4319265'
+__author__ = 'Marius Gedminas <marius@gedmin.as> and Asger Askov Blekinge <abr@statsbiblioteket.dk>'
+__url__ = 'https://gist.github.com/blekinge/84981145fe5cc7860b65e39bc0f27fb7'
 
 # configuration
 repos_dir=os.path.join(os.getcwd(), "repos")
@@ -140,8 +141,6 @@ def back_up_repos_of_org(orgname):
         update_description(dir, description + '\n\n' + repo['html_url'])
         update_cloneurl(dir, repo['ssh_url'])
 
-
-import argparse
 
 parser = argparse.ArgumentParser(description='Clones github repositories and github gists')
 parser.add_argument('--org', action='append',
