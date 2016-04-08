@@ -13,10 +13,8 @@ __author__ = 'Marius Gedminas <marius@gedmin.as>'
 __url__ = 'https://gist.github.com/4319265'
 
 # configuration
-gists_of = ['mgedmin']
-repos_of = ['mgedmin', 'gtimelog']
-backup_dir = os.path.expanduser('~/github')
-gist_backup_dir = os.path.expanduser('~/github/gists')
+repos_dir=os.path.join(os.getcwd(), "repos")
+gists_dir=os.path.join(os.getcwd(), "gists")
 
 
 # helpers
@@ -93,9 +91,10 @@ def update_cloneurl(git_dir, cloneurl):
         f.write(cloneurl + '\n')
 
 
-def back_up_gists_of(username, gist_backup_dir=gist_backup_dir):
-    ensure_dir(gist_backup_dir)
-    os.chdir(gist_backup_dir)
+def back_up_gists_of_user(username):
+    gist_dir = os.path.join(gists_dir, username)
+    ensure_dir(gist_dir)
+    os.chdir(gist_dir)
     for gist in get_github_list('https://api.github.com/users/%s/gists' % username):
         dir = gist['id'] + '.git'
         description = gist['description'] or "(no description)"
@@ -104,10 +103,23 @@ def back_up_gists_of(username, gist_backup_dir=gist_backup_dir):
         update_description(dir, description + '\n\n' + gist['html_url'])
         update_cloneurl(dir, gist['git_push_url'])
 
+def back_up_gists_of_org(orgname):
+    gist_dir = os.path.join(gists_dir, orgname)
+    ensure_dir(gist_dir)
+    os.chdir(gist_dir)
+    for gist in get_github_list('https://api.github.com/users/%s/gists' % orgname):
+        dir = gist['id'] + '.git'
+        description = gist['description'] or "(no description)"
+        info("+", "gists/" + gist['id'], "-", description.partition('\n')[0])
+        backup(gist['git_pull_url'], dir)
+        update_description(dir, description + '\n\n' + gist['html_url'])
+        update_cloneurl(dir, gist['git_push_url'])
 
-def back_up_repos_of(username, backup_dir=backup_dir):
-    ensure_dir(backup_dir)
-    os.chdir(backup_dir)
+
+def back_up_repos_of_user(username):
+    repo_dir = os.path.join(repos_dir, username)
+    ensure_dir(repo_dir)
+    os.chdir(repo_dir)
     for repo in get_github_list('https://api.github.com/users/%s/repos' % username):
         dir = repo['name'] + '.git'
         description = repo['description'] or "(no description)"
@@ -116,10 +128,33 @@ def back_up_repos_of(username, backup_dir=backup_dir):
         update_description(dir, description + '\n\n' + repo['html_url'])
         update_cloneurl(dir, repo['ssh_url'])
 
+def back_up_repos_of_org(orgname):
+    repo_dir = os.path.join(repos_dir, orgname)
+    ensure_dir(repo_dir)
+    os.chdir(repo_dir)
+    for repo in get_github_list('https://api.github.com/orgs/%s/repos' % orgname):
+        dir = repo['name'] + '.git'
+        description = repo['description'] or "(no description)"
+        info("+", repo['full_name'])
+        backup(repo['git_url'], dir)
+        update_description(dir, description + '\n\n' + repo['html_url'])
+        update_cloneurl(dir, repo['ssh_url'])
 
+
+import argparse
+
+parser = argparse.ArgumentParser(description='Clones github repositories and github gists')
+parser.add_argument('--org', action='append',
+                    help='The github organisation to backup', dest='orgs')
+parser.add_argument('--user', action='append',
+                    help='The github user to backup', dest='users')
+
+args = parser.parse_args()
 # action
 if __name__ == '__main__':
-    for user in gists_of:
-        back_up_gists_of(user)
-    for user in repos_of:
-        back_up_repos_of(user)
+    for org in args.orgs or []:
+        back_up_gists_of_org(org)
+        back_up_repos_of_org(org)
+    for user in args.users or []:
+        back_up_gists_of_user(user)
+        back_up_repos_of_user(user)
