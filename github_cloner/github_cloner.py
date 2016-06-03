@@ -5,7 +5,7 @@
 import os
 import sys
 import json
-import urllib.request
+import requests
 import subprocess
 import argparse
 
@@ -35,7 +35,7 @@ def get_json_and_headers(url):
     Returns a tuple (json_data, headers) where headers is an instance
     of email.message.Message (because that's what urllib gives us).
     """
-    with urllib.request.urlopen(url) as r:
+    with requests.get(url) as r:
         # We expect Github to return UTF-8, but let's verify that.
         content_type = r.info().get('Content-Type', '').lower()
         if content_type not in ('application/json; charset="utf-8"',
