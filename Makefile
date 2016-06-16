@@ -15,8 +15,8 @@ BROWSER := python -c "$$BROWSER_PYSCRIPT"
 help:
 	@perl -nle'print $& if m{^[a-zA-Z_-]+:.*?## .*$$}' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-25s\033[0m %s\n", $$1, $$2}'
 
-clean: ## remove all build, test, coverage and Python artifacts
-	clean-build clean-pyc clean-test
+clean: clean-build clean-pyc clean-test ## remove all build, test, coverage and Python artifacts
+
 
 clean-build: ## remove build artifacts
 	rm -fr build/
