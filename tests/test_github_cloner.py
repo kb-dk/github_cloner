@@ -11,8 +11,10 @@ Tests for `github_cloner` module.
 
 import unittest
 
-from github_cloner import github_cloner
+#from github_cloner import github_cloner
 
+import requests
+import requests_mock
 
 class TestGithub_cloner(unittest.TestCase):
 
@@ -23,7 +25,10 @@ class TestGithub_cloner(unittest.TestCase):
         pass
 
     def test_000_something(self):
-        pass
+        with requests_mock.Mocker() as m:
+            m.get('http://test.com', text='resp')
+            print(requests.get('http://test.com').text)
+
 
 
 if __name__ == '__main__':
