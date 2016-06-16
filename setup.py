@@ -12,16 +12,21 @@ with open('HISTORY.rst') as history_file:
     history = history_file.read()
 
 requirements = [
+    'requests',
+    'argparse'
     # TODO: put package requirements here
 ]
 
 test_requirements = [
+    'pytest',
+    'pytest-runner',
+    'requests_mock'
     # TODO: put package test requirements here
 ]
 
 setup(
     name='github_cloner',
-    version='0.1.0',
+    version='0.4.0',
     description="Python Boilerplate contains all the boilerplate you need to create a Python package.",
     long_description=readme + '\n\n' + history,
     author="Asger Askov Blekinge",
@@ -50,6 +55,7 @@ setup(
         'Programming Language :: Python :: 3.4',
         'Programming Language :: Python :: 3.5',
     ],
-    test_suite='nose',
-    tests_require=test_requirements
+    test_suite='tests',
+    tests_require=test_requirements,
+    setup_requires=['pytest-runner']
 )
