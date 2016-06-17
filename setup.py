@@ -14,6 +14,9 @@ with open('HISTORY.rst') as history_file:
 requirements = [
     'requests',
     'argparse',
+    'typing', # For python 2.x and older
+    'pathlib', #For python 2.x and older
+    'enum34', #For python 3.3 and older
     # TODO: put package requirements here
 ]
 
