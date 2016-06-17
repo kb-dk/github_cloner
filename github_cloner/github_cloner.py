@@ -57,13 +57,14 @@ def get_repositories(githubName: str,
         r = requests.get(githubUrl, params={"page": page, "per_page":
             batch_size})
         repositories += r.json()
-    print(json.dumps(repositories))
-    result = parse_repositories(repositories,repo_type)
+    # print(json.dumps(repositories))
+    result = parse_repositories(repositories, repo_type)
 
     return result
 
 
-def parse_repositories(repositories: typing.Dict, repo_type:RepoType) -> typing.List[Repository]:
+def parse_repositories(repositories: typing.Dict, repo_type: RepoType) -> \
+        typing.List[Repository]:
     def _get_repository_url(repository: Repository):
         if repo_type is RepoType.GIST:
             return repository['git_pull_url']
@@ -100,8 +101,7 @@ def backup(githubName: str,
            repo_type: RepoType = RepoType.REPO):
     repositories = get_repositories(githubName, user_type, repo_type)
     for repository in repositories:
-        pass
-        #fetchOrClone(repository.url, Path(repository.name + '.git'))
+        fetchOrClone(repository.url, Path(repository.name + '.git'))
 
 
 
@@ -123,6 +123,6 @@ def main(args):
                    repo_type=repoType)
 
 
-    # action
+# action
 if __name__ == '__main__':
     main(args=sys.argv)
