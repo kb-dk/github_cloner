@@ -1,0 +1,47 @@
+[
+  {
+    "git_pull_url": "https://gist.github.com/84981145fe5cc7860b65e39bc0f27fb7.git",
+    "user": null,
+    "created_at": "2016-04-08T09:28:39Z",
+    "url": "https://api.github.com/gists/84981145fe5cc7860b65e39bc0f27fb7",
+    "git_push_url": "https://gist.github.com/84981145fe5cc7860b65e39bc0f27fb7.git",
+    "owner": {
+      "gists_url": "https://api.github.com/users/blekinge/gists{/gist_id}",
+      "login": "blekinge",
+      "subscriptions_url": "https://api.github.com/users/blekinge/subscriptions",
+      "followers_url": "https://api.github.com/users/blekinge/followers",
+      "gravatar_id": "",
+      "id": 353060,
+      "site_admin": false,
+      "following_url": "https://api.github.com/users/blekinge/following{/other_user}",
+      "events_url": "https://api.github.com/users/blekinge/events{/privacy}",
+      "repos_url": "https://api.github.com/users/blekinge/repos",
+      "starred_url": "https://api.github.com/users/blekinge/starred{/owner}{/repo}",
+      "organizations_url": "https://api.github.com/users/blekinge/orgs",
+      "url": "https://api.github.com/users/blekinge",
+      "html_url": "https://github.com/blekinge",
+      "avatar_url": "https://avatars.githubusercontent.com/u/353060?v=3",
+      "received_events_url": "https://api.github.com/users/blekinge/received_events",
+      "type": "User"
+    },
+    "comments": 0,
+    "id": "84981145fe5cc7860b65e39bc0f27fb7",
+    "forks_url": "https://api.github.com/gists/84981145fe5cc7860b65e39bc0f27fb7/forks",
+    "files": {
+      "github_mirror.py": {
+        "size": 5692,
+        "filename": "github_mirror.py",
+        "language": "Python",
+        "raw_url": "https://gist.githubusercontent.com/blekinge/84981145fe5cc7860b65e39bc0f27fb7/raw/b6bb8f9219b069b531040fb95ae7fa804f44b5cb/github_mirror.py",
+        "type": "application/x-python"
+      }
+    },
+    "public": true,
+    "comments_url": "https://api.github.com/gists/84981145fe5cc7860b65e39bc0f27fb7/comments",
+    "description": "Mirror all my github repositories and gists",
+    "updated_at": "2016-04-08T09:35:50Z",
+    "html_url": "https://gist.github.com/84981145fe5cc7860b65e39bc0f27fb7",
+    "commits_url": "https://api.github.com/gists/84981145fe5cc7860b65e39bc0f27fb7/commits",
+    "truncated": false
+  }
+]
