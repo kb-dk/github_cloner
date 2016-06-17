@@ -14,7 +14,7 @@ from pathlib import Path
 import requests
 import requests_mock
 
-import github_cloner.github_cloner as github_cloner
+import github_cloner
 
 curdir = Path(__file__).parent
 
@@ -52,6 +52,10 @@ class TestGithub_cloner(unittest.TestCase):
         repo1 = repositories[0]
         self.assertEqual(repo1.name, '84981145fe5cc7860b65e39bc0f27fb7')
         self.assertEqual(repo1.url, 'https://gist.github.com/84981145fe5cc7860b65e39bc0f27fb7.git')
+
+    def test_clone_repository(self):
+        #github_cloner.
+        pass
 
     def test_000_something(self):
         with requests_mock.Mocker() as m:
