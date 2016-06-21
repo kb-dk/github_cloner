@@ -8,61 +8,73 @@ test_github_cloner
 Tests for `github_cloner` module.
 """
 import json
-import unittest
-from pathlib import Path
+import os
+import shutil
 
 import requests
 import requests_mock
 
 import github_cloner
+import pytest
 
-curdir = Path(__file__).parent
+curdir = os.path.dirname(os.path.realpath(__file__))
 
 
-class TestGithub_cloner(unittest.TestCase):
-    def setUp(self):
-        pass
+class TestGithub_cloner:
+    @pytest.fixture()
+    def repositories(self):
+        with open(curdir + '/repositories.json') as jsonFile:
+            return json.load(jsonFile)
 
-    def tearDown(self):
-        pass
+    @pytest.fixture()
+    def gists(self):
+        with open(curdir + '/gists.json') as jsonFile:
+            return json.load(jsonFile)
 
-    def test_parse_repositories(self):
-        with Path(curdir, 'repositories.json').open() as jsonFile:
-            repositories_github = json.load(jsonFile)
-        repositories = github_cloner.parse_repositories(repositories_github,
-                                                        github_cloner.RepoType.REPO)
-        self.assertEqual(len(repositories), 3)
+    @pytest.fixture()
+    def tempdir(self):
+        import tempfile
+        return tempfile.mkdtemp()
+
+    def test_parse_repositories(self, repositories):
+        repositoriesParsed = github_cloner.parse_github_repositories(
+            repositories,
+            github_cloner.RepoType.REPO)
+        assert len(repositoriesParsed) == 3
+        repo1 = repositoriesParsed[0]
+        repo2 = repositoriesParsed[1]
+        repo3 = repositoriesParsed[2]
+        assert repo1.name == 'akubra-jdbc'
+        assert repo1.url == 'git@github.com:blekinge/akubra-jdbc.git'
+        assert repo2.name == 'altoviewer'
+        assert repo2.url == 'git@github.com:blekinge/altoviewer.git'
+        assert repo3.name == 'cloudera-vmware-setup'
+        assert repo3.url == 'git@github.com:blekinge/cloudera-vmware-setup' \
+                            '.git'
+
+    def test_parse_repositories_gists(self, gists):
+        repositories = github_cloner.parse_github_repositories(gists,
+                                                               github_cloner.RepoType.GIST)
+        assert len(repositories) == 1
         repo1 = repositories[0]
-        repo2 = repositories[1]
-        repo3 = repositories[2]
-        self.assertEqual(repo1.name, 'akubra-jdbc')
-        self.assertEqual(repo1.url, 'git@github.com:blekinge/akubra-jdbc.git')
-        self.assertEqual(repo2.name, 'altoviewer')
-        self.assertEqual(repo2.url, 'git@github.com:blekinge/altoviewer.git')
-        self.assertEqual(repo3.name, 'cloudera-vmware-setup')
-        self.assertEqual(repo3.url,
-                         'git@github.com:blekinge/cloudera-vmware-setup.git')
+        assert repo1.name == '84981145fe5cc7860b65e39bc0f27fb7'
+        assert repo1.url == 'https://gist.github.com/84981145fe5cc7860b65e39bc0f27fb7.git'
 
-    def test_parse_repositories_gists(self):
-        with Path(curdir, 'gists.json').open() as jsonFile:
-            repositories_github = json.load(jsonFile)
-        repositories = github_cloner.parse_repositories(repositories_github,
-                                                        github_cloner.RepoType.GIST)
-        self.assertEqual(len(repositories), 1)
-        repo1 = repositories[0]
-        self.assertEqual(repo1.name, '84981145fe5cc7860b65e39bc0f27fb7')
-        self.assertEqual(repo1.url, 'https://gist.github.com/84981145fe5cc7860b65e39bc0f27fb7.git')
+    def test_clone_repository(self, tempdir):
+        os.chdir(tempdir)
+        path = '84981145fe5cc7860b65e39bc0f27fb7' + '.git'
+        github_cloner.fetchOrClone(
+            git_url='https://gist.github.com'
+                    '/84981145fe5cc7860b65e39bc0f27fb7.git',
+            repository_path=path)
 
-    def test_clone_repository(self):
-        #github_cloner.
-        pass
+        contents = [file for file in os.listdir(path)]
+        expected = ['hooks', 'HEAD', 'config', 'objects', 'branches',
+                    'packed-refs', 'description', 'info', 'refs']
+        assert contents == expected
+        shutil.rmtree(path)
 
     def test_000_something(self):
         with requests_mock.Mocker() as m:
             m.get('http://test.com', text='resp')
             print(requests.get('http://test.com').text)
-
-#
-# if __name__ == '__main__':
-#     import sys
-#     sys.exit(unittest.main())
