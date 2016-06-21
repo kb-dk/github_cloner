@@ -73,8 +73,3 @@ class TestGithub_cloner:
                     'packed-refs', 'description', 'info', 'refs']
         assert contents == expected
         shutil.rmtree(path)
-
-    def test_000_something(self):
-        with requests_mock.Mocker() as m:
-            m.get('http://test.com', text='resp')
-            print(requests.get('http://test.com').text)

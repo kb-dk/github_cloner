@@ -15,7 +15,6 @@ requirements = [
     'requests',
     'argparse',
     'typing', # For python 2.x and older
-    'pathlib', #For python 2.x and older
     'enum34', #For python 3.3 and older
     # TODO: put package requirements here
 ]
@@ -23,14 +22,14 @@ requirements = [
 test_requirements = [
     'pytest',
     'pytest-runner',
-    'requests_mock'
     # TODO: put package test requirements here
 ]
 
 setup(
     name='github_cloner',
     version='0.4.0',
-    description="Python Boilerplate contains all the boilerplate you need to create a Python package.",
+    description="Python Command line program for harvesting github "
+                "repositories",
     long_description=readme + '\n\n' + history,
     author="Asger Askov Blekinge",
     author_email='asger.askov.blekinge@gmail.com',
@@ -41,8 +40,7 @@ setup(
     packages=[
         'github_cloner',
     ],
-    package_dir={'github_cloner':
-                 'github_cloner'},
+    package_dir={'github_cloner': 'github_cloner'},
     include_package_data=True,
     install_requires=requirements,
     license="ISCL",
