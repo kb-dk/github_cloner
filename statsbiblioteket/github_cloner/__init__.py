@@ -11,7 +11,7 @@ except ImportError:
 logging.getLogger(__name__).addHandler(logging.NullHandler())
 
 # Methods
-from .github_cloner \
+from statsbiblioteket.github_cloner.github_cloner \
     import \
     githubBackup, \
     fetchOrClone, \
@@ -21,7 +21,7 @@ from .github_cloner \
 
 
 # Types
-from .myTypes import \
+from statsbiblioteket.github_cloner.github_cloner import \
     RepoType, \
     UserType, \
     Repository, \

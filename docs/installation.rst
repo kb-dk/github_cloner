@@ -12,7 +12,7 @@ To install github_cloner, run this command in your terminal:
 
 .. code-block:: console
 
-    $ pip install github_cloner
+    $ pip install statsbiblioteket.github_cloner
 
 If you don't have `pip`_ installed, this `Python installation guide`_ can guide
 you through the process.

@@ -12,7 +12,7 @@ import sys
 
 API_GITHUB_COM = 'https://api.github.com'
 
-from github_cloner.myTypes import *
+from statsbiblioteket.github_cloner.myTypes import *
 
 
 class BraceMessage(object):

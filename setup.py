@@ -26,7 +26,7 @@ test_requirements = [
 ]
 
 setup(
-    name='github_cloner',
+    name='statsbiblioteket.github_cloner',
     version='0.1.0',
     description="Python Command line program for harvesting github "
                 "repositories",
@@ -35,12 +35,13 @@ setup(
     author_email='asger.askov.blekinge@gmail.com',
     url='https://github.com/blekinge/github_cloner',
     entry_points={
-        "console_scripts": ['github_cloner = github_cloner.github_cloner:main']
+        "console_scripts": ['github_cloner = '
+                            'statsbiblioteket.github_cloner.github_cloner'
+                            ':main']
     },
     packages=[
-        'github_cloner',
+        'statsbiblioteket.github_cloner',
     ],
-    package_dir={'github_cloner': 'github_cloner'},
     include_package_data=True,
     install_requires=requirements,
     license="ISCL",

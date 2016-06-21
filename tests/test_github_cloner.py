@@ -11,7 +11,7 @@ import json
 import os
 import shutil
 
-import github_cloner
+from statsbiblioteket.github_cloner import  *
 import pytest
 
 curdir = os.path.dirname(os.path.realpath(__file__))
@@ -34,9 +34,9 @@ class TestGithub_cloner:
         return tempfile.mkdtemp()
 
     def test_parse_repositories(self, repositories):
-        repositoriesParsed = github_cloner.parse_github_repositories(
+        repositoriesParsed = parse_github_repositories(
             repositories,
-            github_cloner.RepoType.REPO)
+            RepoType.REPO)
         assert len(repositoriesParsed) == 3
         repo1 = repositoriesParsed[0]
         repo2 = repositoriesParsed[1]
@@ -50,8 +50,8 @@ class TestGithub_cloner:
                             '.git'
 
     def test_parse_repositories_gists(self, gists):
-        repositories = github_cloner.parse_github_repositories(gists,
-                                                               github_cloner.RepoType.GIST)
+        repositories = parse_github_repositories(gists,
+                                                               RepoType.GIST)
         assert len(repositories) == 1
         repo1 = repositories[0]
         assert repo1.name == '84981145fe5cc7860b65e39bc0f27fb7'
@@ -60,7 +60,7 @@ class TestGithub_cloner:
     def test_clone_repository(self, tempdir):
         os.chdir(tempdir)
         path = '84981145fe5cc7860b65e39bc0f27fb7' + '.git'
-        github_cloner.fetchOrClone(
+        fetchOrClone(
             git_url='https://gist.github.com'
                     '/84981145fe5cc7860b65e39bc0f27fb7.git',
             repository_path=path)
