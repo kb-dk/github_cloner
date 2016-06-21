@@ -2,6 +2,7 @@ import argparse
 import json
 import os
 import typing
+import logging
 
 import requests
 import subprocess
@@ -13,6 +14,29 @@ import sys
 API_GITHUB_COM = 'https://api.github.com'
 
 from github_cloner.types import *
+
+
+class BraceMessage(object):
+    def __init__(self, fmt, *args, **kwargs):
+        self.fmt = fmt
+        self.args = args
+        self.kwargs = kwargs
+
+    def __str__(self):
+        return self.fmt.format(*self.args, **self.kwargs)
+
+
+class DollarMessage(object):
+    def __init__(self, fmt, **kwargs):
+        self.fmt = fmt
+        self.kwargs = kwargs
+
+    def __str__(self):
+        from string import Template
+        return Template(self.fmt).substitute(**self.kwargs)
+
+
+M = BraceMessage
 
 
 def get_github_repositories(githubName: str,
@@ -37,14 +61,16 @@ def get_github_repositories(githubName: str,
 
     r = requests.get(githubUrl, params={"per_page": batch_size})
     repositories = r.json()
+    logging.debug(M('Found {0} repositories on github', len(repositories)))
 
     page = 1
     while 'rel="next"' in r.headers.get('Link', ''):
+        logging.debug(M('More repositories to be had'))
         page += 1
         r = requests.get(githubUrl, params={"page": page, "per_page":
             batch_size})
         repositories += r.json()
-    # print(json.dumps(repositories))
+        logging.debug(M('We now have {0} repositories', len(repositories)))
     result = parse_github_repositories(repositories, repo_type)
 
     return result
@@ -89,19 +115,37 @@ def fetchOrClone(git_url: Url, repository_path: Path):
     :param git_url: The git url to clone/fetch from
     :param repository_path: The path to clone the repository to
     :returns: None
-    :raises CalledProcessError: If any of the git processes failed
+    :raises subprocess.CalledProcessError: If any of the git processes failed
     """
-    if os.path.isdir(repository_path):
-        subprocess.check_call(['git', 'remote', 'set-url',
-                               'origin',
-                               git_url],
-                              cwd=os.path.abspath(repository_path))
-        subprocess.check_call(['git', 'fetch'],
-                              cwd=os.path.abspath(repository_path))
+    abspath = os.path.abspath(repository_path)
+
+    should_fetch = os.path.isdir(repository_path)
+
+    if should_fetch:
+        logging.info(M('Fetching updates to repository {0}', repository_path))
+        remote = 'git -C {abspath} remote set-url origin {git_url}'.format(
+            abspath=abspath, git_url=git_url)
+        output = subprocess.check_output(remote.split(),
+                                         stderr=subprocess.STDOUT)
+        logging.debug(
+            M('Running command "{0}"', remote))
+
+        fetch = 'git -C {abspath} --bare fetch --all'.format(
+            abspath=abspath)
+        output = subprocess.check_output(fetch.split(),
+                                         stderr=subprocess.STDOUT)
+        logging.debug(
+            M('Running command "{0}"\n{1}', fetch, output.decode("utf-8")))
     else:
-        # dir.mkdir(parents=True,exist_ok=True)
-        subprocess.check_call(['git', 'clone', '--mirror',
-                               git_url])
+        logging.info(M('Cloning repository {0}', repository_path))
+        os.makedirs(abspath, exist_ok=True)
+
+        clone = 'git -C {abspath} clone --mirror {git_url} .'.format(
+            abspath=abspath, git_url=git_url)
+        output = subprocess.check_output(clone.split(),
+                                         stderr=subprocess.STDOUT)
+        logging.debug(
+            M('Running command "{0}"\n{1}', clone, output.decode("utf-8")))
 
 
 def githubBackup(githubName: str,
@@ -122,6 +166,21 @@ def githubBackup(githubName: str,
         fetchOrClone(repository.url, repository.name + '.git')
 
 
+
+def create_parser():
+    parser = argparse.ArgumentParser(
+        description='Clones github repositories and github gists')
+    parser.add_argument('--org', action='append',
+                        help='The github organisation to backup', dest='orgs')
+    parser.add_argument('--user', action='append',
+                        help='The github user to backup', dest='users')
+    parser.add_argument('--logLevel', default='DEBUG',
+                        help='the log level', dest='loglevel')
+    parser.add_argument('--logFile', default='log.log',
+                        help='the log file', dest='logfile')
+    return parser
+
+
 def main():
     """
     Parse command line args and backup the github repos
@@ -129,13 +188,13 @@ def main():
     :param argv: the command line arguments
     :return: None
     """
-    parser = argparse.ArgumentParser(
-        description='Clones github repositories and github gists')
-    parser.add_argument('--org', action='append',
-                        help='The github organisation to backup', dest='orgs')
-    parser.add_argument('--user', action='append',
-                        help='The github user to backup', dest='users')
+    parser = create_parser()
+
     args = parser.parse_args(sys.argv[1:])
+
+    logging.basicConfig(filename=args.logfile, level=getattr(logging,
+                                                             args.loglevel.upper()))
+
     for org in args.orgs or []:
         for repoType in RepoType:
             githubBackup(githubName=org, user_type=UserType.ORG,
@@ -145,6 +204,7 @@ def main():
             githubBackup(githubName=user, user_type=UserType.USER,
                          repo_type=repoType)
 
+    logging.shutdown()
 
 # action
 if __name__ == '__main__':
