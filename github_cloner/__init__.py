@@ -1,5 +1,14 @@
 # -*- coding: utf-8 -*-
 
+# Set default logging handler to avoid "No handler found" warnings.
+import logging
+try:  # Python 2.7+
+    from logging import NullHandler
+except ImportError:
+    class NullHandler(logging.Handler):
+        def emit(self, record):
+            pass
+logging.getLogger(__name__).addHandler(logging.NullHandler())
 
 # Methods
 from .github_cloner \
@@ -7,7 +16,9 @@ from .github_cloner \
     githubBackup, \
     fetchOrClone, \
     get_github_repositories, \
-    parse_github_repositories
+    parse_github_repositories, \
+    create_parser #This import is important for the sphinx-argparse docs
+
 
 # Types
 from .types import \

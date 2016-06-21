@@ -9,5 +9,5 @@ cryptography==1.0.1
 PyYAML==3.11
 pytest
 pytest-runner
-requests_mock
 requests
+sphinx-argparse
