@@ -35,6 +35,9 @@ setup(
     author="Asger Askov Blekinge",
     author_email='asger.askov.blekinge@gmail.com',
     url='https://github.com/blekinge/github_cloner',
+    entry_points={
+        "console_scripts": ['github_cloner = github_cloner.github_cloner:main']
+    },
     packages=[
         'github_cloner',
     ],
@@ -50,9 +53,9 @@ setup(
         'Intended Audience :: Developers',
         'License :: OSI Approved :: ISC License (ISCL)',
         'Natural Language :: English',
-        "Programming Language :: Python :: 2",
-        'Programming Language :: Python :: 2.6',
-        'Programming Language :: Python :: 2.7',
+        #"Programming Language :: Python :: 2",
+        #'Programming Language :: Python :: 2.6',
+        #'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.3',
         'Programming Language :: Python :: 3.4',
@@ -62,3 +65,5 @@ setup(
     tests_require=test_requirements,
     setup_requires=['pytest-runner']
 )
+
+
