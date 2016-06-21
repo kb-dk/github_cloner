@@ -14,7 +14,7 @@ with open('HISTORY.rst') as history_file:
 requirements = [
     'requests',
     'argparse',
-    'typing', # For python 2.x and older
+    'typing', # For python 3.4 and older
     'enum34', #For python 3.3 and older
     # TODO: put package requirements here
 ]
@@ -27,7 +27,7 @@ test_requirements = [
 
 setup(
     name='github_cloner',
-    version='0.4.0',
+    version='0.1.0',
     description="Python Command line program for harvesting github "
                 "repositories",
     long_description=readme + '\n\n' + history,
@@ -47,7 +47,7 @@ setup(
     zip_safe=False,
     keywords='github_cloner',
     classifiers=[
-        'Development Status :: 2 - Pre-Alpha',
+        'Development Status :: 4 - Beta',
         'Intended Audience :: Developers',
         'License :: OSI Approved :: ISC License (ISCL)',
         'Natural Language :: English',

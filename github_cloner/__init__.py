@@ -21,7 +21,7 @@ from .github_cloner \
 
 
 # Types
-from .types import \
+from .myTypes import \
     RepoType, \
     UserType, \
     Repository, \
@@ -30,4 +30,4 @@ from .types import \
 
 __author__ = 'Asger Askov Blekinge'
 __email__ = 'asger.askov.blekinge@gmail.com'
-__version__ = '0.4.0'
+__version__ = '0.1.0'

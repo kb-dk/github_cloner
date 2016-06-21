@@ -4,7 +4,7 @@ Url = str
 Path = str
 
 
-class Repository:
+class Repository(object):
     """
     The repository definition for the github cloner.
     It has just three fields, name, description, url

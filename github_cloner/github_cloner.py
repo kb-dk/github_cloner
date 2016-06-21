@@ -1,5 +1,4 @@
 import argparse
-import json
 import os
 import typing
 import logging
@@ -13,7 +12,7 @@ import sys
 
 API_GITHUB_COM = 'https://api.github.com'
 
-from github_cloner.types import *
+from github_cloner.myTypes import *
 
 
 class BraceMessage(object):

@@ -11,9 +11,6 @@ import json
 import os
 import shutil
 
-import requests
-import requests_mock
-
 import github_cloner
 import pytest
 
