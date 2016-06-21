@@ -1,37 +1,24 @@
 import argparse
 import json
+import os
 import typing
-import enum
-from pathlib import Path
 
 import requests
 import subprocess
 
 import sys
 
+"""The Github cloner"""
+
 API_GITHUB_COM = 'https://api.github.com'
 
-Url = str
-
-Repository = typing.NamedTuple('Repository', [('name', str),
-                                        ('description', str),
-                                        ('url', Url)])
+from github_cloner.types import *
 
 
-class UserType(enum.Enum):
-    USER = 'users'
-    ORG = 'orgs'
-
-
-class RepoType(enum.Enum):
-    REPO = 'repos'
-    GIST = 'gists'
-
-
-def get_repositories(githubName: str,
-                     user_type: UserType,
-                     repo_type: RepoType,
-                     batch_size: int = 100) -> typing.List[Repository]:
+def get_github_repositories(githubName: str,
+                            user_type: UserType,
+                            repo_type: RepoType,
+                            batch_size: int = 100) -> typing.List[Repository]:
     """
     Format of the JSON is documented at
      http://developer.github.com/v3/repos/#list-organization-repositories
@@ -58,20 +45,28 @@ def get_repositories(githubName: str,
             batch_size})
         repositories += r.json()
     # print(json.dumps(repositories))
-    result = parse_repositories(repositories, repo_type)
+    result = parse_github_repositories(repositories, repo_type)
 
     return result
 
 
-def parse_repositories(repositories: typing.Dict, repo_type: RepoType) -> \
+def parse_github_repositories(repositories: dict, repo_type: RepoType) -> \
         typing.List[Repository]:
-    def _get_repository_url(repository: Repository):
+    """
+    Parse the github repositories into our Repository objects
+
+    :param repositories: a dict of the github json for repositories
+    :param repo_type: enum denoting real Repos or Gists
+    :return: A list of Repository objects
+    """
+
+    def _get_repository_url(repository: dict):
         if repo_type is RepoType.GIST:
             return repository['git_pull_url']
         else:
             return repository['ssh_url']
 
-    def _get_repository_name(repository: Repository):
+    def _get_repository_name(repository: dict):
         if repo_type is RepoType.GIST:
             return repository['id']
         else:
@@ -86,43 +81,71 @@ def parse_repositories(repositories: typing.Dict, repo_type: RepoType) -> \
 
 
 def fetchOrClone(git_url: Url, repository_path: Path):
-    if repository_path.is_dir():
-        subprocess.call(['git', 'remote', 'set-url', 'origin', git_url],
-                        cwd=str(repository_path.absolute()))
-        subprocess.call(['git', 'fetch'],
-                        cwd=str(repository_path.absolute()))
+    """
+    If the repository already exists, perform a fetch. Otherwise perform a
+    clone.
+    The repository is cloned 'bare' i.e. with the --mirror flag
+
+    :param git_url: The git url to clone/fetch from
+    :param repository_path: The path to clone the repository to
+    :returns: None
+    :raises CalledProcessError: If any of the git processes failed
+    """
+    if os.path.isdir(repository_path):
+        subprocess.check_call(['git', 'remote', 'set-url',
+                               'origin',
+                               git_url],
+                              cwd=os.path.abspath(repository_path))
+        subprocess.check_call(['git', 'fetch'],
+                              cwd=os.path.abspath(repository_path))
     else:
         # dir.mkdir(parents=True,exist_ok=True)
-        subprocess.call(['git', 'clone', '--mirror', git_url])
+        subprocess.check_call(['git', 'clone', '--mirror',
+                               git_url])
 
 
-def backup(githubName: str,
-           user_type: UserType = UserType.USER,
-           repo_type: RepoType = RepoType.REPO):
-    repositories = get_repositories(githubName, user_type, repo_type)
+def githubBackup(githubName: str,
+                 user_type: UserType = UserType.USER,
+                 repo_type: RepoType = RepoType.REPO):
+    """
+    Backup all repositories from a specific user/org on github to current
+    working dir
+
+    :param githubName: The name of the organisation/user on github
+    :param user_type: enum USER or ORG
+    :param repo_type: enum REPO or GIST
+    :return: None
+    :raises CalledProcessError: If any of the git processes failed
+    """
+    repositories = get_github_repositories(githubName, user_type, repo_type)
     for repository in repositories:
-        fetchOrClone(repository.url, Path(repository.name + '.git'))
+        fetchOrClone(repository.url, repository.name + '.git')
 
 
+def main():
+    """
+    Parse command line args and backup the github repos
 
-def main(args):
-    # Args
+    :param argv: the command line arguments
+    :return: None
+    """
     parser = argparse.ArgumentParser(
         description='Clones github repositories and github gists')
     parser.add_argument('--org', action='append',
                         help='The github organisation to backup', dest='orgs')
     parser.add_argument('--user', action='append',
                         help='The github user to backup', dest='users')
-    args = parser.parse_args(args[1:])
+    args = parser.parse_args(sys.argv[1:])
     for org in args.orgs or []:
         for repoType in RepoType:
-            backup(githubName=org, user_type=UserType.ORG, repo_type=repoType)
+            githubBackup(githubName=org, user_type=UserType.ORG,
+                         repo_type=repoType)
     for user in args.users or []:
         for repoType in RepoType:
-            backup(githubName=user, user_type=UserType.USER,
-                   repo_type=repoType)
+            githubBackup(githubName=user, user_type=UserType.USER,
+                         repo_type=repoType)
 
 
 # action
 if __name__ == '__main__':
-    main(args=sys.argv)
+    main()
