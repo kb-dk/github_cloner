@@ -3,7 +3,7 @@ github_cloner
 ===============================
 
 .. image:: https://img.shields.io/pypi/v/github_cloner.svg
-        :target: https://pypi.python.org/pypi/github_cloner
+        :target: https://pypi.python.org/pypi/statsbiblioteket.github_cloner
 
 .. image:: https://img.shields.io/travis/blekinge/github_cloner.svg
         :target: https://travis-ci.org/blekinge/github_cloner
@@ -16,6 +16,7 @@ github_cloner
 Python Boilerplate contains all the boilerplate you need to create a Python package.
 
 * Free software: ISC license
+* Documentation: http://pythonhosted.org/statsbiblioteket.github_cloner
 * Documentation: https://github_cloner.readthedocs.org.
 
 Features
