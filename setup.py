@@ -27,7 +27,7 @@ test_requirements = [
 
 setup(
     name='statsbiblioteket.github_cloner',
-    version='0.1.0',
+    version='0.2.0',
     description="Python Command line program for harvesting github "
                 "repositories",
     long_description=readme + '\n\n' + history,
