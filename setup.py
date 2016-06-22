@@ -12,16 +12,16 @@ with open('HISTORY.rst') as history_file:
     history = history_file.read()
 
 requirements = [
-    'requests',
+    'requests==2.10.0',
     'argparse',
-    'typing', # For python 3.4 and older
-    'enum34', #For python 3.3 and older
+    'typing==3.5.2.2', # For python 3.4 and older
+    'enum34==1.1.6', #For python 3.3 and older
     # TODO: put package requirements here
 ]
 
 test_requirements = [
-    'pytest',
-    'pytest-runner',
+    'pytest==2.9.2',
+    'pytest-runner==2.8',
     # TODO: put package test requirements here
 ]
 

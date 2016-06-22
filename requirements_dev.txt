@@ -1,13 +1,13 @@
-bumpversion==0.5.3
 wheel==0.23.0
 watchdog==0.8.3
-flake8==2.4.1
-tox==2.1.1
+
 coverage==4.0
-Sphinx==1.4.4
-cryptography==1.0.1
+#cryptography==1.0.1
 PyYAML==3.11
-pytest
-pytest-runner
-requests
-sphinx-argparse
+
+setuptools #For releasing
+bumpversion==0.5.3 #For releasing
+flake8==2.4.1 #For code style checks
+tox==2.1.1 # For testing with different versions of python
+Sphinx==1.4.4 #For building the docs
+sphinx-argparse==0.1.15 #Argparse module for sphinx, to autodocument the CLI
