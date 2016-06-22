@@ -4,7 +4,7 @@
    contain the root `toctree` directive.
 
 Welcome to github_cloner's documentation!
-======================================
+=========================================
 
 Contents:
 
