@@ -66,20 +66,23 @@ docs: clean-docs ## generate Sphinx HTML documentation, including API docs
 servedocs: docs ## compile the docs watching for changes
 	watchmedo shell-command -p '*.rst' -c '$(MAKE) -C docs html' -R -D .
 
+_git-push-tags:
+	git push --tags
+
 _release-minor:
 	bumpversion minor
 
-release-minor: clean _release-minor deploy
+release-minor: clean _release-minor deploy _git-push-tags
 
 _release-major:
 	bumpversion major
 
-release-major: clean _release-major deploy
+release-major: clean _release-major deploy _git-push-tags
 
 _release-patch:
 	bumpversion patch
 
-release-patch: clean _release-patch deploy
+release-patch: clean _release-patch deploy _git-push-tags
 
 
 deploy:
