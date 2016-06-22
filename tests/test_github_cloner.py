@@ -73,5 +73,5 @@ class TestGithubCloner:
         contents = [file for file in os.listdir(path)]
         expected = ['hooks', 'HEAD', 'config', 'objects', 'branches',
                     'packed-refs', 'description', 'info', 'refs']
-        assert contents == expected
+        assert sorted(contents) == sorted(expected)
         shutil.rmtree(path)
