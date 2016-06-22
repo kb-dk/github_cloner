@@ -2,7 +2,7 @@
 github_cloner
 ===============================
 
-.. image:: https://img.shields.io/pypi/v/github_cloner.svg
+.. image:: https://img.shields.io/pypi/v/statsbiblioteket.github_cloner.svg
         :target: https://pypi.python.org/pypi/statsbiblioteket.github_cloner
 
 .. image:: https://img.shields.io/travis/blekinge/github_cloner.svg
