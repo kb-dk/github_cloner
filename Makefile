@@ -15,7 +15,14 @@ BROWSER := python -c "$$BROWSER_PYSCRIPT"
 help:
 	@perl -nle'print $& if m{^[a-zA-Z_-]+:.*?## .*$$}' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-25s\033[0m %s\n", $$1, $$2}'
 
-clean: clean-build clean-pyc clean-test ## remove all build, test, coverage and Python artifacts
+clean: clean-build clean-pyc clean-test clean-docs
+## remove all build, test, coverage and Python artifacts
+
+clean-docs: ## remove build docs
+	rm -f docs/statsbiblioteket.rst
+	rm -f docs/statsbiblioteket.github_cloner.rst
+	rm -f docs/modules.rst
+	$(MAKE) -C docs clean
 
 
 clean-build: ## remove build artifacts
@@ -37,28 +44,22 @@ clean-test: ## remove test and coverage artifacts
 	rm -fr htmlcov/
 
 lint: ## check style with flake8
-	flake8 github_cloner tests
+	flake8 statsbiblioteket tests
 
 test: ## run tests quickly with the default Python
-	
 		python setup.py test
 
 test-all: ## run tests on every Python version with tox
 	tox
 
 coverage: ## check code coverage quickly with the default Python
-	
-		coverage run --source github_cloner setup.py test
-	
-		coverage report -m
+		coverage run --source statsbiblioteket setup.py test
+	    coverage report -m
 		coverage html
 		$(BROWSER) htmlcov/index.html
 
-docs: ## generate Sphinx HTML documentation, including API docs
-	rm -f docs/github_cloner.rst
-	rm -f docs/modules.rst
+docs: clean-docs ## generate Sphinx HTML documentation, including API docs
 	sphinx-apidoc -o docs/ statsbiblioteket
-	$(MAKE) -C docs clean
 	$(MAKE) -C docs html
 	$(BROWSER) docs/_build/html/index.html
 
@@ -66,10 +67,12 @@ servedocs: docs ## compile the docs watching for changes
 	watchmedo shell-command -p '*.rst' -c '$(MAKE) -C docs html' -R -D .
 
 release: clean ## package and upload a release
+	python setup.py register
 	python setup.py sdist upload
 	python setup.py bdist_wheel upload
+	python setup.py upload_docs
 
-dist: clean ## builds source and wheel package
+dist: clean docs ## builds source and wheel package
 	python setup.py sdist
 	python setup.py bdist_wheel
 	ls -l dist
