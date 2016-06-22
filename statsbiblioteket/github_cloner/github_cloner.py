@@ -1,48 +1,51 @@
+"""The Github cloner."""
+
 import argparse
-import os
-import typing
 import logging
-
-import requests
 import subprocess
-
 import sys
+import typing
 
-"""The Github cloner"""
+import os
+import requests
+
+from statsbiblioteket.github_cloner.myTypes import Path, Repository, \
+    RepoType, Url, UserType
 
 API_GITHUB_COM = 'https://api.github.com'
 
-from statsbiblioteket.github_cloner.myTypes import *
-
 
 class BraceMessage(object):
-    def __init__(self, fmt, *args, **kwargs):
+    """Utility class for {} formatting of messages for logging."""
+
+    def __init__(self, fmt: str, *args, **kwargs):
+        """
+        A formatted version of fmt, using substitutions from args and kwargs.
+        The substitutions are identified by braces ('{' and '}').
+        """
         self.fmt = fmt
         self.args = args
         self.kwargs = kwargs
 
-    def __str__(self):
+    def __str__(self) -> str:
         return self.fmt.format(*self.args, **self.kwargs)
-
-
-class DollarMessage(object):
-    def __init__(self, fmt, **kwargs):
-        self.fmt = fmt
-        self.kwargs = kwargs
-
-    def __str__(self):
-        from string import Template
-        return Template(self.fmt).substitute(**self.kwargs)
 
 
 M = BraceMessage
 
 
-def get_github_repositories(githubName: str,
+def get_github_repositories(github_name: str,
                             user_type: UserType,
                             repo_type: RepoType,
                             batch_size: int = 100) -> typing.List[Repository]:
     """
+    :rtype: typing.List(Repository)
+    :param github_name:
+    :param user_type:
+    :param repo_type:
+    :param batch_size:
+    :return:
+
     Format of the JSON is documented at
      http://developer.github.com/v3/repos/#list-organization-repositories
 
@@ -54,11 +57,11 @@ def get_github_repositories(githubName: str,
 
     """
     # API documented at http://developer.github.com/v3/#pagination
-    githubUrl = '{github}/{userType}/{name}/{repoType}'.format(
-        github=API_GITHUB_COM, userType=user_type.value, name=githubName,
+    github_url = '{github}/{userType}/{name}/{repoType}'.format(
+        github=API_GITHUB_COM, userType=user_type.value, name=github_name,
         repoType=repo_type.value)
 
-    r = requests.get(githubUrl, params={"per_page": batch_size})
+    r = requests.get(github_url, params={"per_page": batch_size})
     repositories = r.json()
     logging.debug(M('Found {0} repositories on github', len(repositories)))
 
@@ -66,8 +69,8 @@ def get_github_repositories(githubName: str,
     while 'rel="next"' in r.headers.get('Link', ''):
         logging.debug(M('More repositories to be had'))
         page += 1
-        r = requests.get(githubUrl, params={"page": page, "per_page":
-            batch_size})
+        r = requests.get(github_url, params={"page": page,
+                                             "per_page": batch_size})
         repositories += r.json()
         logging.debug(M('We now have {0} repositories', len(repositories)))
     result = parse_github_repositories(repositories, repo_type)
@@ -105,7 +108,7 @@ def parse_github_repositories(repositories: dict, repo_type: RepoType) -> \
     return result
 
 
-def fetchOrClone(git_url: Url, repository_path: Path):
+def fetch_or_clone(git_url: Url, repository_path: Path):
     """
     If the repository already exists, perform a fetch. Otherwise perform a
     clone.
@@ -147,23 +150,22 @@ def fetchOrClone(git_url: Url, repository_path: Path):
             M('Running command "{0}"\n{1}', clone, output.decode("utf-8")))
 
 
-def githubBackup(githubName: str,
-                 user_type: UserType = UserType.USER,
-                 repo_type: RepoType = RepoType.REPO):
+def github_backup(github_name: str,
+                  user_type: UserType = UserType.USER,
+                  repo_type: RepoType = RepoType.REPO):
     """
     Backup all repositories from a specific user/org on github to current
     working dir
 
-    :param githubName: The name of the organisation/user on github
+    :param github_name: The name of the organisation/user on github
     :param user_type: enum USER or ORG
     :param repo_type: enum REPO or GIST
     :return: None
     :raises CalledProcessError: If any of the git processes failed
     """
-    repositories = get_github_repositories(githubName, user_type, repo_type)
+    repositories = get_github_repositories(github_name, user_type, repo_type)
     for repository in repositories:
-        fetchOrClone(repository.url, repository.name + '.git')
-
+        fetch_or_clone(repository.url, repository.name + '.git')
 
 
 def create_parser():
@@ -191,19 +193,20 @@ def main():
 
     args = parser.parse_args(sys.argv[1:])
 
-    logging.basicConfig(filename=args.logfile, level=getattr(logging,
-                                                             args.loglevel.upper()))
+    logging.basicConfig(filename=args.logfile,
+                        level=getattr(logging, args.loglevel.upper()))
 
     for org in args.orgs or []:
         for repoType in RepoType:
-            githubBackup(githubName=org, user_type=UserType.ORG,
-                         repo_type=repoType)
+            github_backup(github_name=org, user_type=UserType.ORG,
+                          repo_type=repoType)
     for user in args.users or []:
         for repoType in RepoType:
-            githubBackup(githubName=user, user_type=UserType.USER,
-                         repo_type=repoType)
+            github_backup(github_name=user, user_type=UserType.USER,
+                          repo_type=repoType)
 
     logging.shutdown()
+
 
 # action
 if __name__ == '__main__':
