@@ -22,6 +22,6 @@ from statsbiblioteket.github_cloner.github_cloner import \
 
 __author__ = 'Asger Askov Blekinge'
 __email__ = 'asger.askov.blekinge@gmail.com'
-__version__ = '0.2.0'
+__version__ = '0.2.1rc'
 
 logging.getLogger(__name__).addHandler(logging.NullHandler())
