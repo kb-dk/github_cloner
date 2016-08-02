@@ -21,7 +21,7 @@ except:
     from urllib.request import urlopen
 
 
-GITHUB_REPO = 'blekinge/github_cloner'
+GITHUB_REPO = 'statsbiblioteket/github_cloner'
 TRAVIS_CONFIG_FILE = os.path.join(
     os.path.dirname(os.path.abspath(__file__)), '.travis.yml')
 
