@@ -30,13 +30,13 @@ You can either clone the public repository:
 
 .. code-block:: console
 
-    $ git clone git://github.com/blekinge/github_cloner
+    $ git clone git://github.com/statsbiblioteket/github_cloner
 
 Or download the `tarball`_:
 
 .. code-block:: console
 
-    $ curl  -OL https://github.com/blekinge/github_cloner/tarball/master
+    $ curl  -OL https://github.com/statsbiblioteket/github_cloner/tarball/master
 
 Once you have a copy of the source, you can install it with:
 
@@ -45,5 +45,5 @@ Once you have a copy of the source, you can install it with:
     $ python setup.py install
 
 
-.. _Github repo: https://github.com/blekinge/github_cloner
-.. _tarball: https://github.com/blekinge/github_cloner/tarball/master
+.. _Github repo: https://github.com/statsbiblioteket/github_cloner
+.. _tarball: https://github.com/statsbiblioteket/github_cloner/tarball/master

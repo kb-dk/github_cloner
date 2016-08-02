@@ -33,7 +33,7 @@ setup(
     long_description=readme + '\n\n' + history,
     author="Asger Askov Blekinge",
     author_email='asger.askov.blekinge@gmail.com',
-    url='https://github.com/blekinge/github_cloner',
+    url='https://github.com/statsbiblioteket/github_cloner',
     entry_points={
         "console_scripts": ['github_cloner = '
                             'statsbiblioteket.github_cloner.github_cloner'
