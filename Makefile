@@ -89,7 +89,6 @@ deploy:
 	python setup.py register
 	python setup.py sdist upload
 	python setup.py bdist_wheel upload
-	python setup.py upload_docs
 
 dist: clean docs ## builds source and wheel package
 	python setup.py sdist
