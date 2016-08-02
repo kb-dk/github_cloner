@@ -16,7 +16,6 @@ github_cloner
 Python Boilerplate contains all the boilerplate you need to create a Python package.
 
 * Free software: ISC license
-* Documentation: http://pythonhosted.org/statsbiblioteket.github_cloner
 * Documentation: https://github_cloner.readthedocs.org.
 
 Features
