@@ -5,8 +5,8 @@ github_cloner
 .. image:: https://img.shields.io/pypi/v/statsbiblioteket.github_cloner.svg
         :target: https://pypi.python.org/pypi/statsbiblioteket.github_cloner
 
-.. image:: https://img.shields.io/travis/blekinge/github_cloner.svg
-        :target: https://travis-ci.org/blekinge/github_cloner
+.. image:: https://img.shields.io/travis/statsbiblioteket/github_cloner.svg
+        :target: https://travis-ci.org/statsbiblioteket/github_cloner
 
 .. image:: https://readthedocs.org/projects/github_cloner/badge/?version=latest
         :target: https://readthedocs.org/projects/github_cloner/?badge=latest
