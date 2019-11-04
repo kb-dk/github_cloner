@@ -12,7 +12,7 @@ with open('HISTORY.rst') as history_file:
     history = history_file.read()
 
 requirements = [
-    'requests==2.10.0',
+    'requests==2.20.0',
     'argparse',
     'typing==3.5.2.2', # For python 3.4 and older
     'enum34==1.1.6', #For python 3.3 and older
