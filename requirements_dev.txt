@@ -3,7 +3,7 @@ watchdog==0.8.3
 
 coverage==4.0
 #cryptography==1.0.1
-PyYAML==3.11
+PyYAML==5.1
 
 setuptools #For releasing
 bumpversion==0.5.3 #For releasing
